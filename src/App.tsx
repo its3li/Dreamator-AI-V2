@@ -2,8 +2,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ImageGenerator } from './components/ImageGenerator';
 import { generateImage, downloadImage } from './services/imageService';
 import { ImageGenerationError } from './utils/errors';
-import { useCallback, useState } from 'react';
-import { Download, Link, X, Wand2 } from 'lucide-react';
+import { useCallback, useState, useEffect } from 'react';
+import { Download, Link, X, Wand2, Sun, Moon } from 'lucide-react';
 import { HelpTooltip } from './components/HelpTooltip';
 import { Loader2 } from 'lucide-react';
 
@@ -23,6 +23,19 @@ function App() {
   const [lastPrompt, setLastPrompt] = useState('');
   const [showDownloadPanel, setShowDownloadPanel] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Check system preference on mount
+  useEffect(() => {
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    setIsDarkMode(darkModeMediaQuery.matches);
+
+    // Listen for system theme changes
+    const handleChange = (e: MediaQueryListEvent) => setIsDarkMode(e.matches);
+    darkModeMediaQuery.addEventListener('change', handleChange);
+
+    return () => darkModeMediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   // Function to check if text is Arabic
   const isArabic = (text: string) => {
@@ -181,50 +194,117 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-cyan-900 via-cyan-800 to-cyan-700 text-white relative overflow-hidden">
-      {/* 3D Moving Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <motion.div
-          animate={{
-            scale: [1, 1.1, 1],
-            rotate: [0, 5, -5, 0],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-          className="absolute inset-0 opacity-30"
-        >
-          <div className="absolute w-[800px] h-[800px] bg-cyan-500/20 rounded-full blur-3xl -top-48 -right-48 animate-pulse"></div>
-          <div className="absolute w-[600px] h-[600px] bg-blue-400/20 rounded-full blur-3xl top-1/4 left-1/4 animate-pulse delay-1000"></div>
-          <div className="absolute w-[700px] h-[700px] bg-cyan-400/20 rounded-full blur-3xl -bottom-48 -left-48 animate-pulse delay-2000"></div>
-        </motion.div>
-        
-        {/* Floating Elements */}
-        <div className="absolute inset-0">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              animate={{
-                y: [0, -10, 0],
-                x: [0, Math.random() * 10 - 5, 0],
-                scale: [1, 1.1, 1],
-              }}
-              transition={{
-                duration: 3 + Math.random() * 2,
-                repeat: Infinity,
-                delay: Math.random() * 2,
-              }}
-              className="absolute w-2 h-2 bg-cyan-300/20 rounded-full"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-            />
-          ))}
+    <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'bg-black' : 'bg-gradient-to-br from-cyan-900 via-cyan-800 to-cyan-700'}`}>
+      {/* Theme Toggle Button */}
+      <button
+        onClick={() => setIsDarkMode(!isDarkMode)}
+        className="fixed top-4 right-4 z-50 p-2 rounded-full bg-opacity-20 backdrop-blur-sm transition-all duration-300 hover:scale-110"
+        style={{
+          background: isDarkMode ? 'rgba(147,51,234,0.2)' : 'rgba(6,182,212,0.2)',
+        }}
+      >
+        {isDarkMode ? (
+          <Sun className="w-5 h-5 text-purple-300" />
+        ) : (
+          <Moon className="w-5 h-5 text-cyan-300" />
+        )}
+      </button>
+
+      {/* Dark Mode Background */}
+      {isDarkMode ? (
+        <div className="fixed inset-0 pointer-events-none">
+          {/* Primary gradient blob */}
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              x: [0, 30, 0],
+              y: [0, -20, 0],
+              rotateX: [0, 10, 0],
+              rotateY: [0, 15, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className="absolute top-0 right-0 w-[800px] h-[800px] rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(147,51,234,0.3) 0%, rgba(126,34,206,0.2) 45%, rgba(88,28,135,0.1) 70%)',
+              filter: 'blur(60px)',
+              transform: 'perspective(1000px)',
+            }}
+          />
+
+          {/* Secondary gradient blob */}
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+              x: [0, -20, 0],
+              y: [0, 20, 0],
+              rotateX: [0, -15, 0],
+              rotateY: [0, -10, 0],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Infinity,
+              ease: "linear",
+              delay: 1
+            }}
+            className="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(59,130,246,0.3) 0%, rgba(37,99,235,0.2) 45%, rgba(29,78,216,0.1) 70%)',
+              filter: 'blur(60px)',
+              transform: 'perspective(1000px)',
+            }}
+          />
+
+          {/* Accent gradient blob */}
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              x: [0, 40, 0],
+              rotateZ: [0, 20, 0],
+            }}
+            transition={{
+              duration: 25,
+              repeat: Infinity,
+              ease: "linear",
+              delay: 2
+            }}
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full"
+            style={{
+              background: 'radial-gradient(circle, rgba(236,72,153,0.3) 0%, rgba(219,39,119,0.2) 45%, rgba(190,24,93,0.1) 70%)',
+              filter: 'blur(60px)',
+              transform: 'perspective(1000px)',
+            }}
+          />
+
+          {/* Overlay to control brightness */}
+          <div className="absolute inset-0 bg-black/40" />
         </div>
-      </div>
+      ) : (
+        /* Light Mode Background */
+        <div className="fixed inset-0 pointer-events-none">
+          <motion.div
+            animate={{
+              scale: [1, 1.1, 1],
+              rotateX: [0, 5, 0],
+              rotateY: [0, 10, 0],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            className="absolute inset-0 opacity-30"
+            style={{ transform: 'perspective(1000px)' }}
+          >
+            <div className="absolute w-[800px] h-[800px] bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl -top-48 -right-48"></div>
+            <div className="absolute w-[600px] h-[600px] bg-gradient-to-r from-blue-400/20 to-cyan-500/20 rounded-full blur-3xl top-1/4 left-1/4"></div>
+            <div className="absolute w-[700px] h-[700px] bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-3xl -bottom-48 -left-48"></div>
+          </motion.div>
+        </div>
+      )}
 
       <div className="relative z-10 container mx-auto px-4 py-16 max-w-3xl">
         <motion.div
@@ -232,12 +312,16 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-bold mb-4 text-white font-handwriting">
+          <h1 className={`text-4xl font-bold mb-4 ${isDarkMode ? 'text-purple-100' : 'text-white'} font-handwriting`}>
             Dreamator <span className="text-5xl font-sans">AI</span>
           </h1>
 
-          <p className="text-xl text-cyan-100">Transform your imagination into reality</p>
-          <p className="text-xl text-cyan-100 font-arabic">حوّل خيالك إلى واقع</p>
+          <p className={`text-xl ${isDarkMode ? 'text-purple-200' : 'text-cyan-100'}`}>
+            Transform your imagination into reality
+          </p>
+          <p className={`text-xl ${isDarkMode ? 'text-purple-200' : 'text-cyan-100'} font-arabic`}>
+            حوّل خيالك إلى واقع
+          </p>
         </motion.div>
 
         <ImageGenerator
@@ -246,6 +330,7 @@ function App() {
           message={message}
           onPromptChange={setPrompt}
           onGenerate={handleGenerate}
+          isDarkMode={isDarkMode}
         />
 
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -268,13 +353,13 @@ function App() {
                 }`}
               >
                 {image.isLoading ? (
-                  <div className="w-full h-0 pb-[100%] bg-cyan-800/50 rounded-2xl relative">
+                  <div className={`w-full h-0 pb-[100%] ${isDarkMode ? 'bg-purple-900/30' : 'bg-cyan-800/50'} rounded-2xl relative`}>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                       >
-                        <Loader2 className="w-8 h-8 text-cyan-400" />
+                        <Loader2 className={`w-8 h-8 ${isDarkMode ? 'text-purple-400' : 'text-cyan-400'}`} />
                       </motion.div>
                     </div>
                   </div>
@@ -296,13 +381,15 @@ function App() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-4 p-4 bg-cyan-800/50 rounded-xl backdrop-blur-sm"
+                  className={`mt-4 p-4 ${isDarkMode ? 'bg-purple-900/30' : 'bg-cyan-800/50'} rounded-xl backdrop-blur-sm`}
                 >
                   <input
                     type="text"
                     value={image.editPrompt}
                     onChange={(e) => updateEditPrompt(index, e.target.value)}
-                    className={`w-full p-3 bg-cyan-700/30 rounded-lg text-white placeholder-cyan-200/50 focus:outline-none focus:ring-2 focus:ring-cyan-400 ${
+                    className={`w-full p-3 ${
+                      isDarkMode ? 'bg-purple-800/30 focus:ring-purple-400' : 'bg-cyan-700/30 focus:ring-cyan-400'
+                    } rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 ${
                       isArabic(image.editPrompt) ? 'font-arabic text-right' : ''
                     }`}
                     placeholder="Add details to modify the image..."
@@ -310,13 +397,19 @@ function App() {
                   <div className="flex gap-2 mt-2">
                     <button
                       onClick={() => handleEdit(index, image.editPrompt)}
-                      className="flex-1 bg-gradient-to-r from-cyan-400 to-cyan-500 text-white px-4 py-2 rounded-lg font-medium hover:opacity-90"
+                      className={`flex-1 ${
+                        isDarkMode 
+                          ? 'bg-gradient-to-r from-purple-400 to-blue-500' 
+                          : 'bg-gradient-to-r from-cyan-400 to-cyan-500'
+                      } text-white px-4 py-2 rounded-lg font-medium hover:opacity-90`}
                     >
                       Apply Edit
                     </button>
                     <button
                       onClick={() => toggleEdit(index)}
-                      className="px-4 py-2 bg-cyan-700/30 hover:bg-cyan-700/50 text-white rounded-lg"
+                      className={`px-4 py-2 ${
+                        isDarkMode ? 'bg-purple-800/30 hover:bg-purple-700/50' : 'bg-cyan-700/30 hover:bg-cyan-700/50'
+                      } text-white rounded-lg`}
                     >
                       Cancel
                     </button>
@@ -333,25 +426,37 @@ function App() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="fixed inset-0 bg-cyan-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+              className={`fixed inset-0 ${
+                isDarkMode ? 'bg-purple-900/80' : 'bg-cyan-900/80'
+              } backdrop-blur-sm z-50 flex items-center justify-center p-4`}
             >
-              <div className="bg-cyan-800/90 rounded-2xl p-6 max-w-md w-full relative">
+              <div className={`${
+                isDarkMode ? 'bg-purple-800/90' : 'bg-cyan-800/90'
+              } rounded-2xl p-6 max-w-md w-full relative`}>
                 <button
                   onClick={() => {
                     setShowDownloadPanel(false);
                     setSelectedImage(null);
                   }}
-                  className="absolute right-4 top-4 text-cyan-300 hover:text-white transition-colors"
+                  className={`absolute right-4 top-4 ${
+                    isDarkMode ? 'text-purple-300 hover:text-white' : 'text-cyan-300 hover:text-white'
+                  } transition-colors`}
                 >
                   <X size={24} />
                 </button>
                 
-                <h3 className="text-xl font-semibold mb-4 text-cyan-50">Image Options</h3>
+                <h3 className={`text-xl font-semibold mb-4 ${
+                  isDarkMode ? 'text-purple-50' : 'text-cyan-50'
+                }`}>Image Options</h3>
                 
                 <div className="space-y-4">
                   <button
                     onClick={() => handleDownload(images[selectedImage].url)}
-                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-400 to-cyan-500 text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity"
+                    className={`w-full flex items-center justify-center gap-2 ${
+                      isDarkMode 
+                        ? 'bg-gradient-to-r from-purple-400 to-blue-500' 
+                        : 'bg-gradient-to-r from-cyan-400 to-cyan-500'
+                    } text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity`}
                   >
                     <Download />
                     Download Image
@@ -359,7 +464,9 @@ function App() {
                   
                   <button
                     onClick={() => handleCopyLink(images[selectedImage].url)}
-                    className="w-full flex items-center justify-center gap-2 bg-cyan-700/30 hover:bg-cyan-700/50 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+                    className={`w-full flex items-center justify-center gap-2 ${
+                      isDarkMode ? 'bg-purple-700/30 hover:bg-purple-700/50' : 'bg-cyan-700/30 hover:bg-cyan-700/50'
+                    } text-white px-6 py-3 rounded-xl font-medium transition-colors`}
                   >
                     <Link />
                     Copy Image Link
@@ -370,7 +477,9 @@ function App() {
                       toggleEdit(selectedImage);
                       setShowDownloadPanel(false);
                     }}
-                    className="w-full flex items-center justify-center gap-2 bg-cyan-700/30 hover:bg-cyan-700/50 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+                    className={`w-full flex items-center justify-center gap-2 ${
+                      isDarkMode ? 'bg-purple-700/30 hover:bg-purple-700/50' : 'bg-cyan-700/30 hover:bg-cyan-700/50'
+                    } text-white px-6 py-3 rounded-xl font-medium transition-colors`}
                   >
                     <Wand2 />
                     Edit Image
@@ -382,7 +491,7 @@ function App() {
         </AnimatePresence>
       </div>
 
-      <footer className="text-center text-cyan-300/70 mt-8 font-arabic">
+      <footer className={`text-center ${isDarkMode ? 'text-purple-300/70' : 'text-cyan-300/70'} mt-8 font-arabic`}>
         <p>💻 Built with ❤ by Ali Mahmoud using <span className="font-semibold">React</span>, <span className="font-semibold">Vite</span>, <span className="font-semibold">Tailwind CSS</span>, and <span className="font-semibold">Pollinations API</span>.</p>
         <p>All rights reserved. © 2024 Dreamator AI</p>
       </footer>

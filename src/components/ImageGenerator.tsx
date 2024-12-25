@@ -10,6 +10,7 @@ interface ImageGeneratorProps {
   message: { text: string; type: string };
   onPromptChange: (prompt: string) => void;
   onGenerate: () => void;
+  isDarkMode: boolean;
 }
 
 export function ImageGenerator({
@@ -18,6 +19,7 @@ export function ImageGenerator({
   message,
   onPromptChange,
   onGenerate,
+  isDarkMode,
 }: ImageGeneratorProps) {
   // Function to check if text is Arabic
   const isArabic = (text: string) => {
@@ -45,7 +47,9 @@ export function ImageGenerator({
               onChange={(e) => onPromptChange(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && !isGenerating && onGenerate()}
               placeholder={isArabic(prompt) ? "صف صورتك هنا..." : "Describe your image..."}
-              className={`w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 resize-none min-h-[120px] transition-all duration-200 ${
+              className={`w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 pl-12 text-white placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                isDarkMode ? 'focus:ring-purple-400' : 'focus:ring-cyan-500'
+              } resize-none min-h-[120px] transition-all duration-200 ${
                 isArabic(prompt) ? 'font-arabic text-right' : ''
               } ${isGenerating ? 'opacity-50 cursor-not-allowed' : ''}`}
               style={{
@@ -59,7 +63,7 @@ export function ImageGenerator({
               transition={{ duration: 0.2 }}
               className="absolute left-4 top-4"
             >
-              <Sparkles className="text-cyan-400 w-5 h-5" />
+              <Sparkles className={`w-5 h-5 ${isDarkMode ? 'text-purple-400' : 'text-cyan-400'}`} />
             </motion.div>
           </div>
         </div>
@@ -67,25 +71,33 @@ export function ImageGenerator({
         <button
           onClick={onGenerate}
           disabled={isGenerating}
-          className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-4 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 relative overflow-hidden group"
+          className={`w-full ${
+            isDarkMode 
+              ? 'bg-purple-800/30 hover:bg-purple-700/50' 
+              : 'bg-cyan-700/30 hover:bg-cyan-700/50'
+          } text-white px-6 py-4 rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 relative overflow-hidden group`}
           style={{
             boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.5)',
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className={`absolute inset-0 ${
+            isDarkMode 
+              ? 'bg-gradient-to-r from-purple-400/20 to-blue-400/20' 
+              : 'bg-gradient-to-r from-cyan-400/20 to-blue-400/20'
+          } opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
           {isGenerating ? (
             <>
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               >
-                <Loader2 className="w-5 h-5" />
+                <Loader2 className={`w-5 h-5 ${isDarkMode ? 'text-purple-100' : 'text-white'}`} />
               </motion.div>
               <span>Creating Magic...</span>
             </>
           ) : (
             <>
-              <Wand2 className="w-5 h-5 transform group-hover:rotate-12 transition-transform" />
+              <Wand2 className={`w-5 h-5 transform group-hover:rotate-12 transition-transform ${isDarkMode ? 'text-purple-100' : 'text-white'}`} />
               <span>Generate Images</span>
             </>
           )}
