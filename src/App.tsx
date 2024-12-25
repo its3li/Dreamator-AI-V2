@@ -426,37 +426,29 @@ function App() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className={`fixed inset-0 ${
-                isDarkMode ? 'bg-purple-900/80' : 'bg-cyan-900/80'
-              } backdrop-blur-sm z-50 flex items-center justify-center p-4`}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
             >
-              <div className={`${
-                isDarkMode ? 'bg-purple-800/90' : 'bg-cyan-800/90'
-              } rounded-2xl p-6 max-w-md w-full relative`}>
+              <div className="bg-black/50 backdrop-blur-xl rounded-2xl p-6 max-w-md w-full relative border border-white/10">
                 <button
                   onClick={() => {
                     setShowDownloadPanel(false);
                     setSelectedImage(null);
                   }}
-                  className={`absolute right-4 top-4 ${
-                    isDarkMode ? 'text-purple-300 hover:text-white' : 'text-cyan-300 hover:text-white'
-                  } transition-colors`}
+                  className="absolute right-4 top-4 text-white/70 hover:text-white transition-colors"
                 >
                   <X size={24} />
                 </button>
                 
-                <h3 className={`text-xl font-semibold mb-4 ${
-                  isDarkMode ? 'text-purple-50' : 'text-cyan-50'
-                }`}>Image Options</h3>
+                <h3 className="text-xl font-semibold mb-4 text-white">Image Options</h3>
                 
                 <div className="space-y-4">
                   <button
                     onClick={() => handleDownload(images[selectedImage].url)}
-                    className={`w-full flex items-center justify-center gap-2 ${
+                    className={`w-full ${
                       isDarkMode 
-                        ? 'bg-gradient-to-r from-purple-400 to-blue-500' 
-                        : 'bg-gradient-to-r from-cyan-400 to-cyan-500'
-                    } text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity`}
+                        ? 'bg-purple-800/30 hover:bg-purple-700/50' 
+                        : 'bg-cyan-700/30 hover:bg-cyan-700/50'
+                    } text-white px-6 py-3 rounded-xl font-medium transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2`}
                   >
                     <Download />
                     Download Image
@@ -464,9 +456,7 @@ function App() {
                   
                   <button
                     onClick={() => handleCopyLink(images[selectedImage].url)}
-                    className={`w-full flex items-center justify-center gap-2 ${
-                      isDarkMode ? 'bg-purple-700/30 hover:bg-purple-700/50' : 'bg-cyan-700/30 hover:bg-cyan-700/50'
-                    } text-white px-6 py-3 rounded-xl font-medium transition-colors`}
+                    className="w-full bg-white/5 hover:bg-white/10 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
                   >
                     <Link />
                     Copy Image Link
@@ -477,9 +467,7 @@ function App() {
                       toggleEdit(selectedImage);
                       setShowDownloadPanel(false);
                     }}
-                    className={`w-full flex items-center justify-center gap-2 ${
-                      isDarkMode ? 'bg-purple-700/30 hover:bg-purple-700/50' : 'bg-cyan-700/30 hover:bg-cyan-700/50'
-                    } text-white px-6 py-3 rounded-xl font-medium transition-colors`}
+                    className="w-full bg-white/5 hover:bg-white/10 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
                   >
                     <Wand2 />
                     Edit Image
