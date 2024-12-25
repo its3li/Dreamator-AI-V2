@@ -82,7 +82,7 @@ export function ImageGenerator({
         >
           <div className={`absolute inset-0 ${
             isDarkMode 
-              ? 'bg-gradient-to-r from-purple-400/20 to-blue-400/20' 
+              ? 'bg-gradient-to-r from-purple-400/20 to-purple-600/20' 
               : 'bg-gradient-to-r from-cyan-400/20 to-blue-400/20'
           } opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
           {isGenerating ? (
@@ -112,6 +112,7 @@ export function ImageGenerator({
               className={`p-4 rounded-xl backdrop-blur-sm ${
                 message.type === 'error' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
                 message.type === 'success' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                isDarkMode ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
                 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
               }`}
             >
