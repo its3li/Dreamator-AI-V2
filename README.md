@@ -57,3 +57,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Credits 👏
 
 Built with ❤️ by Ali Mahmoud using React, Vite, Tailwind CSS, and Pollinations API.
+
